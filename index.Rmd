@@ -1,0 +1,115 @@
+---
+title: "Fitness Tracker Deep Learning"
+author: "generalinsight"
+date: "July 26, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Background
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website [here](http://groupware.les.inf.puc-rio.br/har). (Check out the section on the Weight Lifting Exercise Dataset).
+
+### Data Loading
+
+Loading the libraries, and the data files.
+
+```{r, message=FALSE}
+library(tidyverse); library(caret); library(rpart); library(rpart.plot)
+library(e1071); library(ranger)
+```
+
+```{r}
+training <- read.csv("pml-training.csv", na.strings = c("NA", ""))
+testing <- read.csv("pml-testing.csv", na.strings = c("NA", ""))
+dim(training)
+dim(testing)
+```
+
+### Data Processing
+
+Training data has 19,622 rows, with 160 variables, the testing data shows to have 20 rows. 
+
+Remove fields that showed to have NAs throughout.
+
+Then, remove the first 7 fields, since they are not relevant features to contribute in modelling.
+
+```{r}
+training <- training[, colSums(is.na(training)) == 0]
+training <- training[, colSums(is.na(training)) == 0]
+
+traindata <- training[, -c(1:7)]
+testdata <- testing[, -c(1:7)]
+```
+
+Then, split the training data further into training/validation sets with around 70/30 split.
+
+```{r}
+set.seed(12345)
+
+inTrain <- createDataPartition(traindata$classe, p = 0.7, list = FALSE)
+train_d <- traindata[inTrain,]
+valid_d <- traindata[-inTrain,]
+```
+
+###Learning Algorithms
+
+Using classifiaction tree (rpart) and random forest (rnager) as the learning algorithms to compare from. Random forest is known to be one of the best learning algorithms, and we are using a modern model built called "ranger"." 
+
+
+First, run classification tree (rpart). note: only 3 iterations are chosen to reduce running time, especially for 'ranger' model. 
+
+A number around 10 is easily the norm and higher numbers are not uncommon for ideal result. 
+ 
+```{r, cache = TRUE}
+
+myControl <- trainControl(method = "cv", number = 3)
+
+model_rpart <- train(classe ~ ., data = train_d, method = "rpart",
+                     trControl = myControl)
+```
+
+Then, run random forest model (ranger)
+
+
+```{r, cache = TRUE}
+
+model_ranger <- train(classe ~ ., data = train_d, method = "ranger",
+                      trControl = myControl)
+```
+
+Calculate results using validation data. Then check accuracy through confusion matrix.
+
+
+```{r}
+
+result_rpart <- predict(model_rpart, valid_d)
+result_ranger <- predict(model_ranger, valid_d)
+
+confusionMatrix(result_rpart, valid_d$classe)$overall['Accuracy']
+confusionMatrix(result_ranger, valid_d$classe)$overall['Accuracy']
+```
+
+As expected, the second model (ranger) produces much better accuracy, very close to 1, on the validation data, therefore, we choose model_ranger to be the final model.
+
+
+```{r}
+
+results <-resamples(list(rpart = model_rpart, ranger = model_ranger))
+summary(results)
+bwplot(results)
+dotplot(results)
+```
+
+
+###Conclusion
+
+Based on our final model, the data in test is now used for final prediction. The answers are also reported for the Quiz section of this report.
+
+```{r}
+Predict <- predict(model_ranger, testdata, method = "response")
+Predict
+```
