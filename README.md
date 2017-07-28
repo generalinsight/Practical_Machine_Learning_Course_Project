@@ -1,8 +1,9 @@
 
 ## Practical Machine Learning Course Project
 
-Please note that per the github html free hosting process, the compiles submission html page can be viewed at link below:
+Please note that the html submission is hosted at rpus, link below:
 
+http://rpubs.com/GeneralInsight/294949
 
 
 
