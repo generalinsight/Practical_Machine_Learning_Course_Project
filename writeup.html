@@ -126,7 +126,7 @@ $(document).ready(function () {
 
 <div id="background" class="section level3">
 <h3>Background</h3>
-<p>Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website <a href="http://groupware.les.inf.puc-rio.br/har">here</a>. Check out the section on the Weight Lifting Exercise Dataset).</p>
+<p>Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website <a href="http://groupware.les.inf.puc-rio.br/har">here</a>. (Check out the section on the Weight Lifting Exercise Dataset).</p>
 </div>
 <div id="data-loading" class="section level3">
 <h3>Data Loading</h3>
@@ -161,7 +161,7 @@ valid_d &lt;- traindata[-inTrain,]</code></pre>
 <h3>Learning Algorithms</h3>
 <p>Using classifiaction tree (rpart) and random forest (rnager) as the learning algorithms to compare from. Random forest is known to be one of the best learning algorithms, and we are using a modern model built called “ranger”.&quot;</p>
 <p>First, run classification tree (rpart). note: only 3 iterations are chosen to reduce running time, especially for ‘ranger’ model.</p>
-<p>A number between 5-10 is norlally chosen for ideal result.</p>
+<p>A number around 10 is easily the norm and higher numbers are not uncommon for ideal result.</p>
 <pre class="r"><code>myControl &lt;- trainControl(method = &quot;cv&quot;, number = 3)
 
 model_rpart &lt;- train(classe ~ ., data = train_d, method = &quot;rpart&quot;,
